@@ -6,3 +6,34 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum CampaignStatus {
+  ACTIVE
+  PAUSED
+  EXPIRED
+}
+
+enum CampaignCategory {
+  PROMOTION
+  DISCOUNT
+  BRAND_ENGAGEMENT
+  CUSTOMER_ACQUISITION
+  CUSTOMER_RETENTION
+  EVENTS
+  SEASONAL
+  EDUCATIONAL
+  CONTENT_MARKETING
+  SOCIAL_RESPONSIBILITY
+}
+
+model Campaign {
+  id         String           @id @unique @default(uuid()) @db.Uuid
+  name       String           @db.VarChar(200)
+  category   CampaignCategory
+  status     CampaignStatus
+  start_date DateTime
+  end_date   DateTime
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt()
+}
