@@ -1,4 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString, IsDate, MinDate } from 'class-validator';
+import { Type } from 'class-transformer';
 import { CampaignCategory } from '@prisma/client';
 
 export class CreateCampaignDto {
@@ -13,11 +14,13 @@ export class CreateCampaignDto {
   category: CampaignCategory;
 
   @IsDate()
+  @Type(() => Date)
   @MinDate(new Date(), {
     message: 'Campaign start date must be at present or future.',
   })
   startDate: Date;
 
   @IsDate()
+  @Type(() => Date)
   endDate: Date;
 }
