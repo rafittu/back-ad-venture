@@ -5,7 +5,7 @@ import { ICampaign } from '../../interfaces/campaign.interface';
 
 export const createCampaignDtoMock: CreateCampaignDto = {
   name: faker.company.name(),
-  startDate: faker.date.future(),
+  startDate: faker.date.soon(),
   endDate: faker.date.future(),
   category: faker.helpers.arrayElement(Object.values(CampaignCategory)),
 };
@@ -30,8 +30,4 @@ export const iCampaingMock: ICampaign = {
   endDate: campaignMock.end_date,
   createdAt: campaignMock.created_at,
   updatedAt: campaignMock.updated_at,
-};
-
-export const campaignRepositoryMock = {
-  create: jest.fn().mockResolvedValue(campaignMock),
 };
