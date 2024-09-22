@@ -35,10 +35,6 @@ export class CreateCampaignService {
 
       return campaign;
     } catch (error) {
-      if (error instanceof AppError) {
-        throw error;
-      }
-
       throw new AppError(
         'campaign-service.create',
         500,
