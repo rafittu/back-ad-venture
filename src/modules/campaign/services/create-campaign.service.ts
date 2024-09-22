@@ -2,17 +2,18 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AppError } from '../../../common/errors/Error';
 import { CampaignRepository } from '../repository/campaign.repository';
 import { ICampaignRepository } from '../interfaces/repository.interface';
-import { Campaign, CampaignCategory, CampaignStatus } from '@prisma/client';
+import { CampaignCategory, CampaignStatus } from '@prisma/client';
 import { CreateCampaignDto } from '../dto/create-campaign.dto';
+import { ICampaign } from '../interfaces/campaign.interface';
 
 @Injectable()
 export class CreateCampaignService {
   constructor(
     @Inject(CampaignRepository)
-    private readonly campaignRepository: ICampaignRepository<Campaign>,
+    private readonly campaignRepository: ICampaignRepository<ICampaign>,
   ) {}
 
-  async execute(data: CreateCampaignDto) {
+  async execute(data: CreateCampaignDto): Promise<ICampaign> {
     const { name, startDate, endDate } = data;
 
     if (endDate <= startDate) {

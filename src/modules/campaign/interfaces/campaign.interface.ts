@@ -7,3 +7,14 @@ export interface ICreateCampaign {
   start_date: Date;
   end_date: Date;
 }
+
+export interface ICampaign {
+  id: string;
+  name: string;
+  category: CampaignCategory;
+  status: CampaignStatus;
+  startDate: Date;
+  endDate: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
