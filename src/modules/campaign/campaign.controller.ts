@@ -8,12 +8,16 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CreateCampaignService } from './services/create-campaign.service';
+import { FindOneCampaignService } from './services/find-one-campaign.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { ICampaign } from './interfaces/campaign.interface';
 
 @Controller('campaign')
 export class CampaignController {
-  constructor(private readonly createCampaign: CreateCampaignService) {}
+  constructor(
+    private readonly createCampaign: CreateCampaignService,
+    private readonly findOneCampaign: FindOneCampaignService,
+  ) {}
 
   @Post('/create')
   async create(
@@ -27,9 +31,9 @@ export class CampaignController {
     return 'this.campaignService.findAll()';
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return `this.campaignService.findOne(${+id})`;
+  @Get('/:id')
+  async findOne(@Param('id') id: string): Promise<ICampaign> {
+    return await this.findOneCampaign.execute(id);
   }
 
   @Patch(':id')
