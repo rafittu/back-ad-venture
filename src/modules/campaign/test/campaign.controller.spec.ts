@@ -3,12 +3,14 @@ import { CampaignController } from '../campaign.controller';
 import { CreateCampaignService } from '../services/create-campaign.service';
 import { createCampaignDtoMock, iCampaingMock } from './mocks/campaign.mock';
 import { FindOneCampaignService } from '../services/find-one-campaign.service';
+import { FindCampaignsByFilterService } from '../services/find-campaigns-by-filter.service';
 
 describe('CampaignController', () => {
   let controller: CampaignController;
 
   let createCampaignService: CreateCampaignService;
   let findOneCampaignService: FindOneCampaignService;
+  let findCampaignsByFilterService: FindCampaignsByFilterService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +28,12 @@ describe('CampaignController', () => {
             execute: jest.fn().mockResolvedValueOnce(iCampaingMock),
           },
         },
+        {
+          provide: FindCampaignsByFilterService,
+          useValue: {
+            execute: jest.fn().mockResolvedValueOnce([iCampaingMock]),
+          },
+        },
       ],
     }).compile();
 
@@ -35,6 +43,9 @@ describe('CampaignController', () => {
     );
     findOneCampaignService = module.get<FindOneCampaignService>(
       FindOneCampaignService,
+    );
+    findCampaignsByFilterService = module.get<FindCampaignsByFilterService>(
+      FindCampaignsByFilterService,
     );
   });
 
@@ -71,6 +82,29 @@ describe('CampaignController', () => {
       const result = await controller.findOne(iCampaingMock.id);
 
       expect(result).toEqual(iCampaingMock);
+    });
+  });
+
+  describe('find by filters', () => {
+    it('should call FindCampaignsByFilterService ', async () => {
+      const name = 'PROMOTION';
+      const status = 'ACTIVE';
+
+      await controller.findByFilter(name, status);
+
+      expect(findCampaignsByFilterService.execute).toHaveBeenCalledWith({
+        name,
+        status,
+        startDate: undefined,
+        endDate: undefined,
+      });
+    });
+
+    it('should return campaigns by filters successfully', async () => {
+      const name = iCampaingMock.name;
+      const result = await controller.findByFilter(name);
+
+      expect(result).toEqual([iCampaingMock]);
     });
   });
 });
