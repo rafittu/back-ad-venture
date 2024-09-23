@@ -41,7 +41,7 @@ export class CampaignController {
     return `this.campaignService.update(${+id}, ${updateCampaignDto})`;
   }
 
-  @Delete(':id')
+  @Delete('/delete/:id')
   async delete(@Param('id') id: string): Promise<void> {
     return await this.deleteCampaign.execute(id);
   }
