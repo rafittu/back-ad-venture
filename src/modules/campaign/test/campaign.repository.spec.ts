@@ -23,6 +23,7 @@ describe('CampaignRepository', () => {
           useValue: {
             campaign: {
               create: jest.fn().mockResolvedValue(campaignMock),
+              findFirst: jest.fn().mockResolvedValue(campaignMock),
             },
           },
         },
@@ -71,6 +72,14 @@ describe('CampaignRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('campaign not created');
       }
+    });
+  });
+
+  describe('find one', () => {
+    it('should find campaign by id successfully', async () => {
+      const result = await campaignRepository.findOne(iCampaingMock.id);
+
+      expect(result).toEqual(iCampaingMock);
     });
   });
 });
