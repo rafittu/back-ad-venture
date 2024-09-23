@@ -18,6 +18,8 @@ services:
     command: npm run start:dev
     depends_on:
       - db
+    networks:
+      - adventure_network
 
   db:
     image: postgres:13

@@ -36,4 +36,6 @@ model Campaign {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt()
+
+  @@unique([name, category, status])
 }
