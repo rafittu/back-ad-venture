@@ -223,7 +223,7 @@
                             },
                             "updatedAt": {
                                 "type": "string",
-                                "description": "Date and time of last capaign update"
+                                "description": "Date and time of last campaign update"
                             }
                         }
                     }
