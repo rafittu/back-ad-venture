@@ -19,7 +19,7 @@ export class CreateCampaignService {
     if (endDate <= startDate) {
       throw new AppError(
         'campaign-service.create',
-        500,
+        400,
         `'endDate' must be greater then 'startDate'`,
       );
     }
