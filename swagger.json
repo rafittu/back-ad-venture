@@ -169,6 +169,60 @@
                     }
                 }
             }
+        },
+        "/campaign/{id}": {
+            "get": {
+                "summary": "Get campaign by id",
+                "description": "Route to find campaign by id.",
+                "tags": ["Campaign"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                        "type": "string"
+                        },
+                        "description": "Campaign ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Campaign found",
+                        "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CampaignInterface"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                
+                                "examples": {
+                                    "example1": {
+                                        "summary": "service unknown error",
+                                        "value": {
+                                            "error": {
+                                                "message": "could not get campaign",
+                                                "code": "campaign-repository.findOne",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
 
