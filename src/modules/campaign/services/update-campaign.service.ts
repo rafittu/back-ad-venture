@@ -41,15 +41,11 @@ export class UpdateCampaignService {
 
     const existingCampaign = await this.campaignRepository.findOne(campaignId);
 
-    if (status && status === CampaignStatus.ACTIVE) {
-      if (!existingCampaign) {
-        throw new AppError(
-          'campaign-service.update',
-          404,
-          'Campaign not found',
-        );
-      }
+    if (!existingCampaign) {
+      throw new AppError('campaign-service.update', 404, 'Campaign not found');
+    }
 
+    if (status && status === CampaignStatus.ACTIVE) {
       this.checkIfCampaignIsExpired(existingCampaign);
     }
 
