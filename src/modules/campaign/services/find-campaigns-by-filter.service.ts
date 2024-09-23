@@ -3,7 +3,7 @@ import { CampaignStatus } from '@prisma/client';
 import { CampaignRepository } from '../repository/campaign.repository';
 import { ICampaignRepository } from '../interfaces/repository.interface';
 import { CampaignFilters, ICampaign } from '../interfaces/campaign.interface';
-import { AppError } from 'src/common/errors/Error';
+import { AppError } from '../../../common/errors/Error';
 
 @Injectable()
 export class FindCampaignsByFilterService {

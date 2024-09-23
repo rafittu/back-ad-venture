@@ -55,6 +55,22 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
     }
   }
 
+  async findOne(campaignId: string): Promise<ICampaign> {
+    try {
+      const campaign = await this.prisma.campaign.findFirst({
+        where: { id: campaignId },
+      });
+
+      return this.toCamelCase(campaign);
+    } catch (error) {
+      throw new AppError(
+        'campaign-repository.findOne',
+        500,
+        'could not get campaign',
+      );
+    }
+  }
+
   async findByFilters(filters: CampaignFilters): Promise<ICampaign[]> {
     const { name, status, start_date, end_date } = filters;
 
