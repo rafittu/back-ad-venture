@@ -8,6 +8,14 @@ export interface ICreateCampaign {
   end_date: Date;
 }
 
+export interface IUpdateCampaign {
+  name?: string;
+  category?: CampaignCategory;
+  status?: CampaignStatus;
+  start_date?: Date;
+  end_date?: Date;
+}
+
 export interface ICampaign {
   id: string;
   name: string;
