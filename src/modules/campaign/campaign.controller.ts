@@ -8,12 +8,16 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CreateCampaignService } from './services/create-campaign.service';
+import { DeleteCampaignService } from './services/delete-campaign.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { ICampaign } from './interfaces/campaign.interface';
 
 @Controller('campaign')
 export class CampaignController {
-  constructor(private readonly createCampaign: CreateCampaignService) {}
+  constructor(
+    private readonly createCampaign: CreateCampaignService,
+    private readonly deleteCampaign: DeleteCampaignService,
+  ) {}
 
   @Post('/create')
   async create(
@@ -38,7 +42,7 @@ export class CampaignController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return `this.campaignService.remove(${+id})`;
+  async delete(@Param('id') id: string): Promise<void> {
+    return await this.deleteCampaign.execute(id);
   }
 }
