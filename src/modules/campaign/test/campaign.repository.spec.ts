@@ -81,5 +81,19 @@ describe('CampaignRepository', () => {
 
       expect(result).toEqual(iCampaingMock);
     });
+
+    it('should throw a generic error for unexpected prisma errors', async () => {
+      jest
+        .spyOn(prismaService.campaign, 'findFirst')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await campaignRepository.findOne(iCampaingMock.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('could not get campaign');
+      }
+    });
   });
 });
