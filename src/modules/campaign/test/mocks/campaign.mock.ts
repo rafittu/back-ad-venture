@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { CreateCampaignDto } from '../../dto/create-campaign.dto';
 import { Campaign, CampaignCategory, CampaignStatus } from '@prisma/client';
 import {
+  CampaignFilters,
   ICampaign,
   ICreateCampaign,
 } from '../../interfaces/campaign.interface';
@@ -41,4 +42,12 @@ export const iCampaingMock: ICampaign = {
   endDate: campaignMock.end_date,
   createdAt: campaignMock.created_at,
   updatedAt: campaignMock.updated_at,
+};
+
+export const campaignFilterMock: CampaignFilters = {
+  name: iCampaingMock.name,
+  status: iCampaingMock.status,
+  category: iCampaingMock.category,
+  start_date: iCampaingMock.startDate,
+  end_date: iCampaingMock.endDate,
 };

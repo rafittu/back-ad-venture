@@ -169,6 +169,233 @@
                     }
                 }
             }
+        },
+        "/campaign/{id}": {
+            "get": {
+                "summary": "Get campaign by id",
+                "description": "Route to find campaign by id.",
+                "tags": ["Campaign"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                        "type": "string"
+                        },
+                        "description": "Campaign ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Campaign found",
+                        "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CampaignInterface"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                
+                                "examples": {
+                                    "example1": {
+                                        "summary": "service unknown error",
+                                        "value": {
+                                            "error": {
+                                                "message": "could not get campaign",
+                                                "code": "campaign-repository.findOne",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/campaign/filter": {
+            "get": {
+                "summary": "Get campaigns by filter",
+                "description": "Route to find campaigns by filters.",
+                "tags": ["Campaign"],
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                        "type": "string"
+                        },
+                        "description": "Campaign name"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                        "type": "string",
+                        "enum": ["ACTIVE", "PAUSED", "EXPIRED"]
+                        },
+                        "description": "Campaign status"
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                        "type": "string",
+                        "enum": [
+                            "PROMOTION",
+                            "DISCOUNT",
+                            "BRAND_ENGAGEMENT",
+                            "CUSTOMER_ACQUISITION",
+                            "CUSTOMER_RETENTION",
+                            "EVENTS",
+                            "SEASONAL",
+                            "EDUCATIONAL",
+                            "CONTENT_MARKETING",
+                            "SOCIAL_RESPONSIBILITY"
+                        ]
+                        },
+                        "description": "Campaign category"
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                        "type": "string",
+                        "format": "date-time"
+                        },
+                        "description": "Campaigns starting date (ISO 8601)"
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                        "type": "string",
+                        "format": "date-time"
+                        },
+                        "description": "Campaigns ending date (ISO 8601)"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of campaigns",
+                        "content": {
+                        "application/json": {
+                            "schema": {
+                            "$ref": "#/components/schemas/CampaignInterfaceArray"
+                            }
+                        }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                "$ref": "#/components/schemas/Error"
+                                },
+
+                                "examples": {
+                                    "example1": {
+                                        "summary": "invalid category",
+                                        "value": {
+                                            "error": {
+                                                "message": "Invalid category value 'value'",
+                                                "code": "campaign-service.findByFilter",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example2": {
+                                        "summary": "invalid status",
+                                        "value": {
+                                            "error": {
+                                                "message": "Invalid status value 'status'. Allowed values: ACTIVE, PAUSED, EXPIRED.",
+                                                "code": "campaign-service.findByFilter",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example3": {
+                                        "summary": "invalid startDate format",
+                                        "value": {
+                                            "error": {
+                                                "message": "startDate must be in ISO 8601 format (2024-10-15T23:59:00Z)",
+                                                "code": "campaign-service.findByFilter",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example4": {
+                                        "summary": "invalid enddate format",
+                                        "value": {
+                                            "error": {
+                                                "message": "endDate must be in ISO 8601 format (2024-10-15T23:59:00Z)",
+                                                "code": "campaign-service.findByFilter",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example5": {
+                                        "summary": "invalid startDate or endDate campaign",
+                                        "value": {
+                                            "error": {
+                                                "message": "startDate must be before endDate",
+                                                "code": "campaign-service.findByFilter",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Error"
+                            },
+            
+                            "examples": {
+                                "example1": {
+                                    "summary": "service unknown error",
+                                    "value": {
+                                        "error": {
+                                            "message": "could not get campaigns",
+                                            "code": "campaign-repository.findByFilters",
+                                            "status": true
+                                        },
+                                        "data": {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    }
+                }
+            }
         }
     },
 
@@ -252,6 +479,12 @@
                         }
                     }
                 ]
+            },
+            "CampaignInterfaceArray": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/CampaignInterface"
+                }
             },
 
             "Error": {
