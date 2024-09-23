@@ -8,6 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CreateCampaignService } from './services/create-campaign.service';
+import { UpdateCampaignService } from './services/update-campaign.service';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { ICampaign } from './interfaces/campaign.interface';
