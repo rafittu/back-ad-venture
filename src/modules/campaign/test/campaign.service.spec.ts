@@ -50,7 +50,7 @@ describe('CampaignServices', () => {
         await createCampaign.execute(invalidDto);
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect(error.code).toBe(500);
+        expect(error.code).toBe(400);
         expect(error.message).toBe(
           `'endDate' must be greater then 'startDate'`,
         );
