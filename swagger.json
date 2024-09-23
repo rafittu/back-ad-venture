@@ -73,6 +73,28 @@
                                         }
                                     },
                                     "example2": {
+                                        "summary": "invalid 'startDate'",
+                                        "value": {
+                                            "error": {
+                                                "message": "Campaign 'startDate' must be at present or future in ISO 8601 format.",
+                                                "code": "bad.request",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example3": {
+                                        "summary": "invalid 'endDate''",
+                                        "value": {
+                                            "error": {
+                                                "message": "Campaign 'endDate' must be at future in ISO 8601 format.",
+                                                "code": "bad.request",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example4": {
                                         "summary": "invalid startDate or endDate campaign",
                                         "value": {
                                             "error": {
@@ -178,11 +200,13 @@
                     },
                     "startDate": {
                         "type": "string",
-                        "description": "Campaign start date and time"
+                        "format": "date-time",
+                        "description": "Campaign start date and time (ISO 8601 format)"
                     },
                     "endDate": {
                         "type": "string",
-                        "description": "Campaign end date and time"
+                        "format": "date-time",
+                        "description": "Campaign end date and time (ISO 8601 format)"
                     }
                 }
             },
