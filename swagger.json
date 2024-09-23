@@ -8,5 +8,254 @@
         "url": "https://wophi.be/"
         },
         "version": "3.0.0"
+    },
+
+    "paths": {
+        "/campaign/create": {
+            "post": {
+                "summary": "Create campaign",
+                "description": "Route to create new campaign.",
+                "tags": ["Campaign"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {                    
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateCampaignDto"
+                            },
+                            "example": {
+                                "name": "VALE25",
+                                "category": "PROMOTION",
+                                "startDate": "2024-10-01T08:00:00Z",
+                                "endDate": "2024-10-15T23:59:00Z"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Campaign created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                "$ref": "#/components/schemas/CampaignInterface"
+                                },
+                                "example": {
+                                "id": "fca1c783-96d1-49f9-b8cb-89a7dd8af76a",
+                                "name": "VALE25",
+                                "category": "PROMOTION",
+                                "status": "ACTIVE",
+                                "startDate": "2024-10-01T08:00:00Z",
+                                "endDate": "2024-10-15T23:59:00Z",
+                                "createdAt": "2024-10-01T08:00:00.743Z",
+                                "updatedAt": "2024-10-01T08:00:00.743Z"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                "$ref": "#/components/schemas/Error"
+                                },
+
+                                "examples": {
+                                    "example1": {
+                                        "summary": "invalid request body",
+                                        "value": {
+                                            "error": {
+                                                "message": ["One or more fields are missing or invalid"],
+                                                "code": "bad.request",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example2": {
+                                        "summary": "invalid startDate or endDate campaign",
+                                        "value": {
+                                            "error": {
+                                                "message": "'endDate' must be greater then 'startDate'",
+                                                "code": "campaign-service.create",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                "$ref": "#/components/schemas/Error"
+                                },
+                                "examples": {
+                                    "example1": {
+                                        "summary": "'field' already in use",
+                                        "value": {
+                                            "error": {
+                                                "message": "'name' already in use",
+                                                "code": "campaign-repository.create",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Error"
+                            },
+            
+                            "examples": {
+                                "example1": {
+                                    "summary": "service unknown error",
+                                    "value": {
+                                        "error": {
+                                            "message": "failed to create campaign",
+                                            "code": "campaign-service.create",
+                                            "status": true
+                                        },
+                                        "data": {}
+                                    }
+                                },
+                                "example2": {
+                                    "summary": "repository unknown error",
+                                    "value": {
+                                        "error": {
+                                            "message": "campaign not created",
+                                            "code": "campaign-repository.create",
+                                            "status": true
+                                        },
+                                        "data": {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    }
+                }
+            }
+        }
+    },
+
+    "components": {
+        "schemas": {
+            "CreateCampaign": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 200,
+                        "description": "Campaign name"
+                    },
+                    "category": {
+                        "type": "string",
+                        "enum": [
+                            "PROMOTION",
+                            "DISCOUNT",
+                            "BRAND_ENGAGEMENT",
+                            "CUSTOMER_ACQUISITION",
+                            "CUSTOMER_RETENTION",
+                            "EVENTS",
+                            "SEASONAL",
+                            "EDUCATIONAL",
+                            "CONTENT_MARKETING",
+                            "SOCIAL_RESPONSIBILITY"
+                        ],
+                        "description": "Campaign category"
+                    },
+                    "startDate": {
+                        "type": "string",
+                        "description": "Campaign start date and time"
+                    },
+                    "endDate": {
+                        "type": "string",
+                        "description": "Campaign end date and time"
+                    }
+                }
+            },
+            "CreateCampaignDto": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/CreateCampaign"},
+                    {
+                        "required": [
+                            "name",
+                            "category",
+                            "startDate",
+                            "endDate"
+                        ]
+                    }
+                ]
+            },
+            "CampaignInterface": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/CreateCampaign"},
+                    {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "Campaign ID"
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "ACTIVE",
+                                    "PAUSED",
+                                    "EXPIRED"
+                                ],
+                                "description": "Campaign status"
+                            },
+                            "createdAt": {
+                                "type": "string",
+                                "description": "Date and time of campaign creation"
+                            },
+                            "updatedAt": {
+                                "type": "string",
+                                "description": "Date and time of last capaign update"
+                            }
+                        }
+                    }
+                ]
+            },
+
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "object",
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "description": "Error message"
+                            },
+                            "code": {
+                                "type": "string",
+                                "description": "Error code"
+                            },
+                            "status": {
+                                "type": "boolean",
+                                "description": "Error status"
+                            }
+                        }
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {}
+                    }
+                }
+            }
+        }
     }
 }
