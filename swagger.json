@@ -1,0 +1,12 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "AdVenture",
+        "description": "Back-end API to manage campaigns",
+        "contact": {
+        "name": "Rafael Ribeiro",
+        "url": "https://wophi.be/"
+        },
+        "version": "3.0.0"
+    }
+}
