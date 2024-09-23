@@ -47,7 +47,7 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
 
   async findOne(campaignId: string): Promise<ICampaign> {
     try {
-      const campaign = await this.prisma.campaign.findUnique({
+      const campaign = await this.prisma.campaign.findFirst({
         where: { id: campaignId },
       });
 
