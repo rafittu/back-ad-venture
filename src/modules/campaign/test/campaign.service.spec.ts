@@ -109,5 +109,48 @@ describe('CampaignServices', () => {
 
       expect(result).toEqual([iCampaingMock]);
     });
+
+    it('should throw error if startDate is not in ISO 8601 format', async () => {
+      const filters = { startDate: 'invalid-format' };
+
+      try {
+        await findCampaignsByFilter.execute(filters);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          `startDate must be in ISO 8601 format (2024-10-15T23:59:00Z)`,
+        );
+      }
+    });
+
+    it('should throw error if enddate is not in ISO 8601 format', async () => {
+      const filters = { endDate: 'invalid-format' };
+
+      try {
+        await findCampaignsByFilter.execute(filters);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          `endDate must be in ISO 8601 format (2024-10-15T23:59:00Z)`,
+        );
+      }
+    });
+
+    it('should throw error if startDate is after endDate', async () => {
+      const filters = {
+        startDate: '2024-10-16T00:00:00Z',
+        endDate: '2024-10-15T23:59:00Z',
+      };
+
+      try {
+        await findCampaignsByFilter.execute(filters);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('startDate must be before endDate');
+      }
+    });
   });
 });
