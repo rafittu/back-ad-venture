@@ -24,12 +24,12 @@ export class UpdateCampaignDto {
   @MinDate(new Date(), {
     message: `Campaign 'startDate' must be at present or future in ISO 8601 format.`,
   })
-  startDate?: string;
+  startDate?: Date;
 
   @IsOptional()
   @Type(() => Date)
   @MinDate(new Date(), {
     message: `Campaign 'endDate' must be at future in ISO 8601 format.`,
   })
-  endDate?: string;
+  endDate?: Date;
 }
