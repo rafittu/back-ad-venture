@@ -101,8 +101,8 @@ describe('CampaignServices', () => {
       const filter = {
         name: iCampaingMock.name,
         status: iCampaingMock.status,
-        start_date: iCampaingMock.startDate,
-        end_date: iCampaingMock.endDate,
+        startDate: iCampaingMock.startDate.toISOString(),
+        endDate: iCampaingMock.endDate.toISOString(),
       };
 
       const result = await findCampaignsByFilter.execute(filter);
@@ -150,6 +150,20 @@ describe('CampaignServices', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(400);
         expect(error.message).toBe('startDate must be before endDate');
+      }
+    });
+
+    it('should throw error if status is invalid', async () => {
+      const filters = { status: 'invalid-status' };
+
+      try {
+        await findCampaignsByFilter.execute(filters);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          `Invalid status value 'invalid-status'. Allowed values: ACTIVE, PAUSED, EXPIRED.`,
+        );
       }
     });
   });
