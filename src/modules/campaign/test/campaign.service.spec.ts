@@ -3,9 +3,11 @@ import { CreateCampaignService } from '../services/create-campaign.service';
 import { CampaignRepository } from '../repository/campaign.repository';
 import { createCampaignDtoMock, iCampaingMock } from './mocks/campaign.mock';
 import { AppError } from '../../../common/errors/Error';
+import { FindOneCampaignService } from '../services/find-one-campaign.service';
 
 describe('CampaignServices', () => {
   let createCampaign: CreateCampaignService;
+  let findOneCampaign: FindOneCampaignService;
 
   let campaignRepository: CampaignRepository;
 
@@ -15,22 +17,28 @@ describe('CampaignServices', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CreateCampaignService,
+        FindOneCampaignService,
         {
           provide: CampaignRepository,
           useValue: {
             create: jest.fn().mockResolvedValue(iCampaingMock),
+            findOne: jest.fn().mockResolvedValue(iCampaingMock),
           },
         },
       ],
     }).compile();
 
     createCampaign = module.get<CreateCampaignService>(CreateCampaignService);
+    findOneCampaign = module.get<FindOneCampaignService>(
+      FindOneCampaignService,
+    );
 
     campaignRepository = module.get<CampaignRepository>(CampaignRepository);
   });
 
   it('should be defined', () => {
     expect(createCampaign).toBeDefined();
+    expect(findOneCampaign).toBeDefined();
   });
 
   describe('create campaign', () => {
@@ -69,6 +77,14 @@ describe('CampaignServices', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to create campaign');
       }
+    });
+  });
+
+  describe('find one campaign', () => {
+    it('should return a campaign by id successfully', async () => {
+      const result = await findOneCampaign.execute(iCampaingMock.id);
+
+      expect(result).toEqual(iCampaingMock);
     });
   });
 });
