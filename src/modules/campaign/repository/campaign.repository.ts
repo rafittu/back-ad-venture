@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ICampaignRepository } from '../interfaces/repository.interface';
 import { PrismaService } from '../../../prisma.service';
-import { ICampaign, ICreateCampaign } from '../interfaces/campaign.interface';
+import {
+  CampaignFilters,
+  ICampaign,
+  ICreateCampaign,
+} from '../interfaces/campaign.interface';
 import { AppError } from '../../../common/errors/Error';
 
 @Injectable()
@@ -21,6 +25,12 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
     }
 
     return camelCaseObject;
+  }
+
+  private toCamelCaseArray(snakeCaseObjects: any[]): any[] {
+    return snakeCaseObjects.map((snakeCaseObject) =>
+      this.toCamelCase(snakeCaseObject),
+    );
   }
 
   async create(data: ICreateCampaign): Promise<ICampaign> {
@@ -57,6 +67,32 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
         'campaign-repository.findOne',
         500,
         'could not get campaign',
+      );
+    }
+  }
+
+  async findByFilters(filters: CampaignFilters): Promise<ICampaign[]> {
+    const { name, status, category, start_date, end_date } = filters;
+
+    try {
+      const campaigns = await this.prisma.campaign.findMany({
+        where: {
+          ...(name && {
+            name: { contains: name, mode: 'insensitive' },
+          }),
+          ...(status && { status: status }),
+          ...(category && { category: category }),
+          ...(start_date && { start_date: { gte: start_date } }),
+          ...(end_date && { end_date: { lte: end_date } }),
+        },
+      });
+
+      return this.toCamelCaseArray(campaigns);
+    } catch (error) {
+      throw new AppError(
+        'campaign-repository.findByFilters',
+        500,
+        'could not get campaigns',
       );
     }
   }

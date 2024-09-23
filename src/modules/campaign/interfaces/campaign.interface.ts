@@ -18,3 +18,11 @@ export interface ICampaign {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface CampaignFilters {
+  name?: string;
+  status?: CampaignStatus;
+  category?: CampaignCategory;
+  start_date?: Date;
+  end_date?: Date;
+}

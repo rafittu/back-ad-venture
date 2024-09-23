@@ -6,9 +6,11 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CreateCampaignService } from './services/create-campaign.service';
 import { FindOneCampaignService } from './services/find-one-campaign.service';
+import { FindCampaignsByFilterService } from './services/find-campaigns-by-filter.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { ICampaign } from './interfaces/campaign.interface';
 
@@ -17,6 +19,7 @@ export class CampaignController {
   constructor(
     private readonly createCampaign: CreateCampaignService,
     private readonly findOneCampaign: FindOneCampaignService,
+    private readonly findCampaignsByFilter: FindCampaignsByFilterService,
   ) {}
 
   @Post('/create')
@@ -26,9 +29,21 @@ export class CampaignController {
     return await this.createCampaign.execute(createCampaignDto);
   }
 
-  @Get()
-  findAll() {
-    return 'this.campaignService.findAll()';
+  @Get('/filter')
+  async findByFilter(
+    @Query('name') name?: string,
+    @Query('status') status?: string,
+    @Query('category') category?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ): Promise<ICampaign[]> {
+    return await this.findCampaignsByFilter.execute({
+      name,
+      status,
+      category,
+      startDate,
+      endDate,
+    });
   }
 
   @Get('/:id')
