@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { CampaignRepository } from '../repository/campaign.repository';
 import { ICampaignRepository } from '../interfaces/repository.interface';
-import { AppError } from 'src/common/errors/Error';
+import { AppError } from '../../../common/errors/Error';
 
 @Injectable()
 export class DeleteCampaignService {
@@ -13,10 +13,12 @@ export class DeleteCampaignService {
   async execute(campaignId: string): Promise<void> {
     const existingCampaign = await this.campaignRepository.findOne(campaignId);
 
-    if (!existingCampaign) {
+    console.log(existingCampaign);
+
+    if (!existingCampaign || {}) {
       throw new AppError('campaign-service.delete', 404, 'Campaign not found');
     }
 
-    return await this.campaignRepository.delete(campaignId);
+    await this.campaignRepository.delete(campaignId);
   }
 }
