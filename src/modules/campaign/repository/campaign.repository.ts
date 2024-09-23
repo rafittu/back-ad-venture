@@ -44,4 +44,16 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
       );
     }
   }
+
+  async delete(campaignId: string): Promise<void> {
+    try {
+      await this.prisma.campaign.delete({ where: { id: campaignId } });
+    } catch (error) {
+      throw new AppError(
+        'campaign-repository.delete',
+        500,
+        'could not delete campaign',
+      );
+    }
+  }
 }
