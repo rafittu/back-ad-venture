@@ -44,4 +44,20 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
       );
     }
   }
+
+  async findOne(campaignId: string): Promise<ICampaign> {
+    try {
+      const campaign = await this.prisma.campaign.findUnique({
+        where: { id: campaignId },
+      });
+
+      return this.toCamelCase(campaign);
+    } catch (error) {
+      throw new AppError(
+        'campaign-repository.findOne',
+        500,
+        'could not get campaign',
+      );
+    }
+  }
 }
