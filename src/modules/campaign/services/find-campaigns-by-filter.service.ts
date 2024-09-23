@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CampaignStatus } from '@prisma/client';
+import { CampaignCategory, CampaignStatus } from '@prisma/client';
 import { CampaignRepository } from '../repository/campaign.repository';
 import { ICampaignRepository } from '../interfaces/repository.interface';
 import { CampaignFilters, ICampaign } from '../interfaces/campaign.interface';
@@ -15,6 +15,7 @@ export class FindCampaignsByFilterService {
   async execute(data: {
     name?: string;
     status?: string;
+    category?: string;
     startDate?: string;
     endDate?: string;
   }): Promise<ICampaign[]> {
@@ -55,8 +56,31 @@ export class FindCampaignsByFilterService {
       return upperStatus as CampaignStatus;
     };
 
+    const validateCategory = (
+      category: string | undefined,
+    ): CampaignCategory | undefined => {
+      if (!category) return undefined;
+
+      const upperCategory = category.toUpperCase();
+
+      if (
+        !Object.values(CampaignCategory).includes(
+          upperCategory as CampaignCategory,
+        )
+      ) {
+        throw new AppError(
+          'campaign-service.findByFilter',
+          400,
+          `Invalid category value '${category}'.`,
+        );
+      }
+
+      return upperCategory as CampaignCategory;
+    };
+
     try {
       const validStatus = validateStatus(data.status);
+      const validatedCategory = validateCategory(data.category);
       const validStartDate = validateDate(startDate, 'startDate');
       const validEndDate = validateDate(endDate, 'endDate');
 
@@ -72,6 +96,7 @@ export class FindCampaignsByFilterService {
 
       if (data.name) filters.name = data.name;
       if (validStatus) filters.status = validStatus;
+      if (validatedCategory) filters.category = validatedCategory;
       if (startDate) filters.start_date = new Date(startDate);
       if (endDate) filters.end_date = new Date(endDate);
 

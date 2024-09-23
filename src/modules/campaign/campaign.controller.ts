@@ -33,12 +33,14 @@ export class CampaignController {
   async findByFilter(
     @Query('name') name?: string,
     @Query('status') status?: string,
+    @Query('category') category?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ): Promise<ICampaign[]> {
     return await this.findCampaignsByFilter.execute({
       name,
       status,
+      category,
       startDate,
       endDate,
     });
