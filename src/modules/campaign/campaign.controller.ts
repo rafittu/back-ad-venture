@@ -8,12 +8,16 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CreateCampaignService } from './services/create-campaign.service';
+import { UpdateCampaignDto } from './dto/update-campaign.dto';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { ICampaign } from './interfaces/campaign.interface';
 
 @Controller('campaign')
 export class CampaignController {
-  constructor(private readonly createCampaign: CreateCampaignService) {}
+  constructor(
+    private readonly createCampaign: CreateCampaignService,
+    private readonly updateCampaign: UpdateCampaignService,
+  ) {}
 
   @Post('/create')
   async create(
@@ -32,9 +36,12 @@ export class CampaignController {
     return `this.campaignService.findOne(${+id})`;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCampaignDto) {
-    return `this.campaignService.update(${+id}, ${updateCampaignDto})`;
+  @Patch('/update/:id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateCampaignDto: UpdateCampaignDto,
+  ): Promise<ICampaign> {
+    return await this.updateCampaign.execute(id, updateCampaignDto);
   }
 
   @Delete(':id')
