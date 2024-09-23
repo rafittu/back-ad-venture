@@ -4,10 +4,12 @@ import { CampaignRepository } from '../repository/campaign.repository';
 import { createCampaignDtoMock, iCampaingMock } from './mocks/campaign.mock';
 import { AppError } from '../../../common/errors/Error';
 import { FindOneCampaignService } from '../services/find-one-campaign.service';
+import { FindCampaignsByFilterService } from '../services/find-campaigns-by-filter.service';
 
 describe('CampaignServices', () => {
   let createCampaign: CreateCampaignService;
   let findOneCampaign: FindOneCampaignService;
+  let findCampaignsByFilter: FindCampaignsByFilterService;
 
   let campaignRepository: CampaignRepository;
 
@@ -18,11 +20,13 @@ describe('CampaignServices', () => {
       providers: [
         CreateCampaignService,
         FindOneCampaignService,
+        FindCampaignsByFilterService,
         {
           provide: CampaignRepository,
           useValue: {
             create: jest.fn().mockResolvedValue(iCampaingMock),
             findOne: jest.fn().mockResolvedValue(iCampaingMock),
+            findByFilters: jest.fn().mockResolvedValue([iCampaingMock]),
           },
         },
       ],
@@ -32,6 +36,9 @@ describe('CampaignServices', () => {
     findOneCampaign = module.get<FindOneCampaignService>(
       FindOneCampaignService,
     );
+    findCampaignsByFilter = module.get<FindCampaignsByFilterService>(
+      FindCampaignsByFilterService,
+    );
 
     campaignRepository = module.get<CampaignRepository>(CampaignRepository);
   });
@@ -39,6 +46,7 @@ describe('CampaignServices', () => {
   it('should be defined', () => {
     expect(createCampaign).toBeDefined();
     expect(findOneCampaign).toBeDefined();
+    expect(findCampaignsByFilter).toBeDefined();
   });
 
   describe('create campaign', () => {
@@ -85,6 +93,21 @@ describe('CampaignServices', () => {
       const result = await findOneCampaign.execute(iCampaingMock.id);
 
       expect(result).toEqual(iCampaingMock);
+    });
+  });
+
+  describe('find one campaign', () => {
+    it('should return campaigns by filters', async () => {
+      const filter = {
+        name: iCampaingMock.name,
+        status: iCampaingMock.status,
+        start_date: iCampaingMock.startDate,
+        end_date: iCampaingMock.endDate,
+      };
+
+      const result = await findCampaignsByFilter.execute(filter);
+
+      expect(result).toEqual([iCampaingMock]);
     });
   });
 });
