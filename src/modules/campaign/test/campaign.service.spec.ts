@@ -96,11 +96,12 @@ describe('CampaignServices', () => {
     });
   });
 
-  describe('find one campaign', () => {
+  describe('find campaigns by filter', () => {
     it('should return campaigns by filters', async () => {
       const filter = {
         name: iCampaingMock.name,
         status: iCampaingMock.status,
+        category: iCampaingMock.category,
         startDate: iCampaingMock.startDate.toISOString(),
         endDate: iCampaingMock.endDate.toISOString(),
       };
@@ -163,6 +164,20 @@ describe('CampaignServices', () => {
         expect(error.code).toBe(400);
         expect(error.message).toBe(
           `Invalid status value 'invalid-status'. Allowed values: ACTIVE, PAUSED, EXPIRED.`,
+        );
+      }
+    });
+
+    it('should throw error if category is invalid', async () => {
+      const filters = { category: 'invalid-category' };
+
+      try {
+        await findCampaignsByFilter.execute(filters);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          `Invalid category value 'invalid-category'.`,
         );
       }
     });

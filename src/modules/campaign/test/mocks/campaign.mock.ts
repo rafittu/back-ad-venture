@@ -47,6 +47,7 @@ export const iCampaingMock: ICampaign = {
 export const campaignFilterMock: CampaignFilters = {
   name: iCampaingMock.name,
   status: iCampaingMock.status,
+  category: iCampaingMock.category,
   start_date: iCampaingMock.startDate,
   end_date: iCampaingMock.endDate,
 };
