@@ -31,7 +31,7 @@ export class CampaignController {
     return 'this.campaignService.findAll()';
   }
 
-  @Get(':id')
+  @Get('/:id')
   async findOne(@Param('id') id: string): Promise<ICampaign> {
     return await this.findOneCampaign.execute(id);
   }
