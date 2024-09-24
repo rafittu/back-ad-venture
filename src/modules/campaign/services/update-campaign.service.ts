@@ -49,7 +49,7 @@ export class UpdateCampaignService {
       this.checkIfCampaignIsExpired(existingCampaign);
     }
 
-    this.validateCampaignDates();
+    this.validateCampaignDates(startDate, endDate);
 
     return await this.campaignRepository.update(campaignId, {
       name,
