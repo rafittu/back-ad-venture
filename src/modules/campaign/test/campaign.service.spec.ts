@@ -11,12 +11,14 @@ import { FindOneCampaignService } from '../services/find-one-campaign.service';
 import { FindCampaignsByFilterService } from '../services/find-campaigns-by-filter.service';
 import { UpdateCampaignService } from '../services/update-campaign.service';
 import { CampaignStatus } from '@prisma/client';
+import { DeleteCampaignService } from '../services/delete-campaign.service';
 
 describe('CampaignServices', () => {
   let createCampaign: CreateCampaignService;
   let findOneCampaign: FindOneCampaignService;
   let findCampaignsByFilter: FindCampaignsByFilterService;
   let updateCampaign: UpdateCampaignService;
+  let deleteCampaign: DeleteCampaignService;
 
   let campaignRepository: CampaignRepository;
 
@@ -29,6 +31,7 @@ describe('CampaignServices', () => {
         FindOneCampaignService,
         FindCampaignsByFilterService,
         UpdateCampaignService,
+        DeleteCampaignService,
         {
           provide: CampaignRepository,
           useValue: {
@@ -36,6 +39,7 @@ describe('CampaignServices', () => {
             findOne: jest.fn().mockResolvedValue(iCampaingMock),
             findByFilters: jest.fn().mockResolvedValue([iCampaingMock]),
             update: jest.fn().mockResolvedValue(iCampaingMock),
+            delete: jest.fn().mockResolvedValue(null),
           },
         },
       ],
@@ -49,6 +53,7 @@ describe('CampaignServices', () => {
       FindCampaignsByFilterService,
     );
     updateCampaign = module.get<UpdateCampaignService>(UpdateCampaignService);
+    deleteCampaign = module.get<DeleteCampaignService>(DeleteCampaignService);
 
     campaignRepository = module.get<CampaignRepository>(CampaignRepository);
   });
@@ -58,6 +63,7 @@ describe('CampaignServices', () => {
     expect(findOneCampaign).toBeDefined();
     expect(findCampaignsByFilter).toBeDefined();
     expect(updateCampaign).toBeDefined();
+    expect(deleteCampaign).toBeDefined();
   });
 
   describe('create campaign', () => {
@@ -249,6 +255,31 @@ describe('CampaignServices', () => {
         expect(error.message).toBe(
           'Cannot update campaign to ACTIVE because it has already expired.',
         );
+      }
+    });
+  });
+
+  describe('delete campaign', () => {
+    it('should delete a campaign successfully', async () => {
+      jest
+        .spyOn(campaignRepository, 'findOne')
+        .mockResolvedValueOnce(iCampaingMock);
+
+      await deleteCampaign.execute(iCampaingMock.id);
+
+      expect(campaignRepository.findOne).toHaveBeenCalledWith(iCampaingMock.id);
+      expect(campaignRepository.delete).toHaveBeenCalledWith(iCampaingMock.id);
+    });
+
+    it('should throw an error if campaign is not found', async () => {
+      jest.spyOn(campaignRepository, 'findOne').mockResolvedValueOnce(null);
+
+      try {
+        await deleteCampaign.execute(iCampaingMock.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(404);
+        expect(error.message).toBe('Campaign not found');
       }
     });
   });

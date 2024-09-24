@@ -596,6 +596,75 @@
                     }
                 }
             }
+        },
+        "/campaign/delete/{id}": {
+            "delete": {
+                "summary": "Delete a campaign",
+                "description": "Deletes a campaign by ID",
+                "tags": ["Campaign"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                        "type": "string"
+                        },
+                        "description": "Campaign ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Campaign deleted successfully"
+                    },
+                    "404": {
+                        "description": "Campaign not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                "$ref": "#/components/schemas/Error"
+                                },
+                                "examples": {
+                                    "example1": {
+                                        "summary": "campaign not found",
+                                        "value": {
+                                            "error": {
+                                                "message": "Campaign not found",
+                                                "code": "campaign-service.delete",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                "$ref": "#/components/schemas/Error"
+                                },
+                                "examples": {
+                                    "example1": {
+                                        "summary": "could not delete campaign",
+                                        "value": {
+                                            "error": {
+                                                "message": "could not delete campaign",
+                                                "code": "campaign-repository.delete",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
 

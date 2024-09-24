@@ -13,6 +13,7 @@ import { FindOneCampaignService } from './services/find-one-campaign.service';
 import { FindCampaignsByFilterService } from './services/find-campaigns-by-filter.service';
 import { UpdateCampaignService } from './services/update-campaign.service';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
+import { DeleteCampaignService } from './services/delete-campaign.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { ICampaign } from './interfaces/campaign.interface';
 
@@ -23,6 +24,7 @@ export class CampaignController {
     private readonly findOneCampaign: FindOneCampaignService,
     private readonly findCampaignsByFilter: FindCampaignsByFilterService,
     private readonly updateCampaign: UpdateCampaignService,
+    private readonly deleteCampaign: DeleteCampaignService,
   ) {}
 
   @Post('/create')
@@ -62,8 +64,8 @@ export class CampaignController {
     return await this.updateCampaign.execute(id, updateCampaignDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return `this.campaignService.remove(${+id})`;
+  @Delete('/delete/:id')
+  async delete(@Param('id') id: string): Promise<void> {
+    return await this.deleteCampaign.execute(id);
   }
 }

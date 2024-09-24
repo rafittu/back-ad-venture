@@ -9,4 +9,5 @@ export interface ICampaignRepository<ICampaign> {
   findOne(id: string): Promise<ICampaign>;
   findByFilters(filters: CampaignFilters): Promise<ICampaign[]>;
   update(id: string, data: IUpdateCampaign): Promise<ICampaign>;
+  delete(campaignId: string): Promise<void>;
 }

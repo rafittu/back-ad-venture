@@ -9,6 +9,7 @@ import {
 import { FindOneCampaignService } from '../services/find-one-campaign.service';
 import { FindCampaignsByFilterService } from '../services/find-campaigns-by-filter.service';
 import { UpdateCampaignService } from '../services/update-campaign.service';
+import { DeleteCampaignService } from '../services/delete-campaign.service';
 
 describe('CampaignController', () => {
   let controller: CampaignController;
@@ -17,6 +18,7 @@ describe('CampaignController', () => {
   let findOneCampaignService: FindOneCampaignService;
   let findCampaignsByFilterService: FindCampaignsByFilterService;
   let updateCampaignService: UpdateCampaignService;
+  let deleteCampaignService: DeleteCampaignService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -46,6 +48,12 @@ describe('CampaignController', () => {
             execute: jest.fn().mockResolvedValueOnce(iCampaingMock),
           },
         },
+        {
+          provide: DeleteCampaignService,
+          useValue: {
+            execute: jest.fn().mockResolvedValueOnce(null),
+          },
+        },
       ],
     }).compile();
 
@@ -61,6 +69,9 @@ describe('CampaignController', () => {
     );
     updateCampaignService = module.get<UpdateCampaignService>(
       UpdateCampaignService,
+    );
+    deleteCampaignService = module.get<DeleteCampaignService>(
+      DeleteCampaignService,
     );
   });
 
@@ -140,6 +151,22 @@ describe('CampaignController', () => {
       );
 
       expect(result).toEqual(iCampaingMock);
+    });
+  });
+
+  describe('delete', () => {
+    it('should call DeleteCampaignService with correct id', async () => {
+      await controller.delete(iCampaingMock.id);
+
+      expect(deleteCampaignService.execute).toHaveBeenCalledWith(
+        iCampaingMock.id,
+      );
+    });
+
+    it('should delete a campaign successfully', async () => {
+      const result = await controller.delete(iCampaingMock.id);
+
+      expect(result).toBe(null);
     });
   });
 });

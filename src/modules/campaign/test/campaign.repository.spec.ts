@@ -28,6 +28,7 @@ describe('CampaignRepository', () => {
               findFirst: jest.fn().mockResolvedValue(campaignMock),
               findMany: jest.fn().mockResolvedValue([campaignMock]),
               update: jest.fn().mockResolvedValue(campaignMock),
+              delete: jest.fn().mockResolvedValue(null),
             },
           },
         },
@@ -159,6 +160,32 @@ describe('CampaignRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('could not update campaign');
+      }
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete a campaign successfully', async () => {
+      jest.spyOn(prismaService.campaign, 'delete').mockResolvedValueOnce(null);
+
+      await campaignRepository.delete(iCampaingMock.id);
+
+      expect(prismaService.campaign.delete).toHaveBeenCalledWith({
+        where: { id: iCampaingMock.id },
+      });
+    });
+
+    it('should throw a generic error if prisma delete fails', async () => {
+      jest
+        .spyOn(prismaService.campaign, 'delete')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await campaignRepository.delete(iCampaingMock.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('could not delete campaign');
       }
     });
   });
