@@ -28,4 +28,9 @@ export class ScheduledTaskService {
       this.jobs.delete(campaignId);
     }
   }
+
+  async rescheduleCampaignEnd(campaignId: string, newEndDate: Date) {
+    this.cancelScheduledTask(campaignId);
+    this.scheduleCampaignEnd(campaignId, newEndDate);
+  }
 }
