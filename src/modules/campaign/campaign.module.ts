@@ -7,6 +7,7 @@ import { FindCampaignsByFilterService } from './services/find-campaigns-by-filte
 import { FindOneCampaignService } from './services/find-one-campaign.service';
 import { UpdateCampaignService } from './services/update-campaign.service';
 import { DeleteCampaignService } from './services/delete-campaign.service';
+import { ScheduledTaskService } from './services/scheduled-tasks.service';
 
 @Module({
   controllers: [CampaignController],
@@ -18,6 +19,7 @@ import { DeleteCampaignService } from './services/delete-campaign.service';
     FindCampaignsByFilterService,
     UpdateCampaignService,
     DeleteCampaignService,
+    ScheduledTaskService,
   ],
 })
 export class CampaignModule {}
