@@ -317,5 +317,24 @@ describe('CampaignServices', () => {
       );
       expect(scheduledTasks['jobs'].get(iCampaingMock.id)).toEqual(mockJob);
     });
+
+    it('should reschedule a campaign end task', async () => {
+      const mockJob = { cancel: jest.fn() };
+
+      (schedule.scheduleJob as jest.Mock).mockReturnValue(mockJob);
+      scheduledTasks['jobs'].set(iCampaingMock.id, mockJob);
+
+      await scheduledTasks.rescheduleCampaignEnd(
+        iCampaingMock.id,
+        iCampaingMock.endDate,
+      );
+
+      expect(mockJob.cancel).toHaveBeenCalled();
+      expect(schedule.scheduleJob).toHaveBeenCalledWith(
+        iCampaingMock.endDate,
+        expect.any(Function),
+      );
+      expect(scheduledTasks['jobs'].get(iCampaingMock.id)).toEqual(mockJob);
+    });
   });
 });
