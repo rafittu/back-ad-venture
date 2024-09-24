@@ -12,6 +12,7 @@ import { FindCampaignsByFilterService } from '../services/find-campaigns-by-filt
 import { UpdateCampaignService } from '../services/update-campaign.service';
 import { CampaignStatus } from '@prisma/client';
 import { DeleteCampaignService } from '../services/delete-campaign.service';
+import { ScheduledTaskService } from '../services/scheduled-tasks.service';
 
 describe('CampaignServices', () => {
   let createCampaign: CreateCampaignService;
@@ -19,6 +20,7 @@ describe('CampaignServices', () => {
   let findCampaignsByFilter: FindCampaignsByFilterService;
   let updateCampaign: UpdateCampaignService;
   let deleteCampaign: DeleteCampaignService;
+  let scheduledTasks: ScheduledTaskService;
 
   let campaignRepository: CampaignRepository;
 
@@ -32,6 +34,7 @@ describe('CampaignServices', () => {
         FindCampaignsByFilterService,
         UpdateCampaignService,
         DeleteCampaignService,
+        ScheduledTaskService,
         {
           provide: CampaignRepository,
           useValue: {
@@ -40,6 +43,7 @@ describe('CampaignServices', () => {
             findByFilters: jest.fn().mockResolvedValue([iCampaingMock]),
             update: jest.fn().mockResolvedValue(iCampaingMock),
             delete: jest.fn().mockResolvedValue(null),
+            checkCampaignStatus: jest.fn(),
           },
         },
       ],
@@ -54,6 +58,7 @@ describe('CampaignServices', () => {
     );
     updateCampaign = module.get<UpdateCampaignService>(UpdateCampaignService);
     deleteCampaign = module.get<DeleteCampaignService>(DeleteCampaignService);
+    scheduledTasks = module.get<ScheduledTaskService>(ScheduledTaskService);
 
     campaignRepository = module.get<CampaignRepository>(CampaignRepository);
   });
@@ -64,6 +69,7 @@ describe('CampaignServices', () => {
     expect(findCampaignsByFilter).toBeDefined();
     expect(updateCampaign).toBeDefined();
     expect(deleteCampaign).toBeDefined();
+    expect(scheduledTasks).toBeDefined();
   });
 
   describe('create campaign', () => {
@@ -281,6 +287,14 @@ describe('CampaignServices', () => {
         expect(error.code).toBe(404);
         expect(error.message).toBe('Campaign not found');
       }
+    });
+  });
+
+  describe('scheduled tasks', () => {
+    it('should call checkCampaignStatus on campaignRepository', async () => {
+      await scheduledTasks.checkCampaignStatus();
+
+      expect(campaignRepository.checkCampaignStatus).toHaveBeenCalled();
     });
   });
 });
