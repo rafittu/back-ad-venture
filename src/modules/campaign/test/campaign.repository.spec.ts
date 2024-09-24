@@ -6,6 +6,7 @@ import {
   campaignMock,
   iCampaingMock,
   iCreateCampaingMock,
+  iUpdateCampaignMock,
 } from './mocks/campaign.mock';
 import { AppError } from '../../../common/errors/Error';
 
@@ -26,6 +27,7 @@ describe('CampaignRepository', () => {
               create: jest.fn().mockResolvedValue(campaignMock),
               findFirst: jest.fn().mockResolvedValue(campaignMock),
               findMany: jest.fn().mockResolvedValue([campaignMock]),
+              update: jest.fn().mockResolvedValue(campaignMock),
             },
           },
         },
@@ -117,6 +119,46 @@ describe('CampaignRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('could not get campaigns');
+      }
+    });
+  });
+
+  describe('update', () => {
+    it('should update a campaign successfully', async () => {
+      const result = await campaignRepository.update(
+        iCampaingMock.id,
+        iUpdateCampaignMock,
+      );
+
+      expect(result).toEqual(iCampaingMock);
+    });
+
+    it('should throw conflict error', async () => {
+      jest.spyOn(prismaService.campaign, 'update').mockRejectedValueOnce({
+        code: 'P2002',
+        meta: { target: ['name'] },
+      });
+
+      try {
+        await campaignRepository.update(iCampaingMock.id, iUpdateCampaignMock);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(409);
+        expect(error.message).toBe('name already in use');
+      }
+    });
+
+    it('should throw a generic error if prisma update fails', async () => {
+      jest
+        .spyOn(prismaService.campaign, 'update')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await campaignRepository.update(iCampaingMock.id, iUpdateCampaignMock);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('could not update campaign');
       }
     });
   });

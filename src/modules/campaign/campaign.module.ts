@@ -5,6 +5,7 @@ import { CreateCampaignService } from './services/create-campaign.service';
 import { PrismaService } from '../../prisma.service';
 import { FindCampaignsByFilterService } from './services/find-campaigns-by-filter.service';
 import { FindOneCampaignService } from './services/find-one-campaign.service';
+import { UpdateCampaignService } from './services/update-campaign.service';
 
 @Module({
   controllers: [CampaignController],
@@ -14,6 +15,7 @@ import { FindOneCampaignService } from './services/find-one-campaign.service';
     CreateCampaignService,
     FindOneCampaignService,
     FindCampaignsByFilterService,
+    UpdateCampaignService,
   ],
 })
 export class CampaignModule {}

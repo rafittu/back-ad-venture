@@ -5,7 +5,9 @@ import {
   CampaignFilters,
   ICampaign,
   ICreateCampaign,
+  IUpdateCampaign,
 } from '../../interfaces/campaign.interface';
+import { UpdateCampaignDto } from '../../dto/update-campaign.dto';
 
 export const createCampaignDtoMock: CreateCampaignDto = {
   name: faker.company.name(),
@@ -50,4 +52,20 @@ export const campaignFilterMock: CampaignFilters = {
   category: iCampaingMock.category,
   start_date: iCampaingMock.startDate,
   end_date: iCampaingMock.endDate,
+};
+
+export const updateCampaignDtoMock: UpdateCampaignDto = {
+  name: 'Updated Campaign Name',
+  status: CampaignStatus.ACTIVE,
+  category: CampaignCategory.PROMOTION,
+  startDate: faker.date.soon(),
+  endDate: faker.date.future(),
+};
+
+export const iUpdateCampaignMock: IUpdateCampaign = {
+  name: updateCampaignDtoMock.name,
+  category: updateCampaignDtoMock.category,
+  status: updateCampaignDtoMock.status,
+  start_date: updateCampaignDtoMock.startDate,
+  end_date: updateCampaignDtoMock.endDate,
 };

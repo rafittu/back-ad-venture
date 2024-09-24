@@ -11,6 +11,8 @@ import {
 import { CreateCampaignService } from './services/create-campaign.service';
 import { FindOneCampaignService } from './services/find-one-campaign.service';
 import { FindCampaignsByFilterService } from './services/find-campaigns-by-filter.service';
+import { UpdateCampaignService } from './services/update-campaign.service';
+import { UpdateCampaignDto } from './dto/update-campaign.dto';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { ICampaign } from './interfaces/campaign.interface';
 
@@ -20,6 +22,7 @@ export class CampaignController {
     private readonly createCampaign: CreateCampaignService,
     private readonly findOneCampaign: FindOneCampaignService,
     private readonly findCampaignsByFilter: FindCampaignsByFilterService,
+    private readonly updateCampaign: UpdateCampaignService,
   ) {}
 
   @Post('/create')
@@ -51,9 +54,12 @@ export class CampaignController {
     return await this.findOneCampaign.execute(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCampaignDto) {
-    return `this.campaignService.update(${+id}, ${updateCampaignDto})`;
+  @Patch('/update/:id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateCampaignDto: UpdateCampaignDto,
+  ): Promise<ICampaign> {
+    return await this.updateCampaign.execute(id, updateCampaignDto);
   }
 
   @Delete(':id')

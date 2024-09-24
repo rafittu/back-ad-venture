@@ -5,6 +5,7 @@ import {
   CampaignFilters,
   ICampaign,
   ICreateCampaign,
+  IUpdateCampaign,
 } from '../interfaces/campaign.interface';
 import { AppError } from '../../../common/errors/Error';
 
@@ -93,6 +94,39 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
         'campaign-repository.findByFilters',
         500,
         'could not get campaigns',
+      );
+    }
+  }
+
+  async update(campaignId: string, data: IUpdateCampaign): Promise<ICampaign> {
+    const { name, status, category, start_date, end_date } = data;
+
+    try {
+      const updatedCampaign = await this.prisma.campaign.update({
+        where: { id: campaignId },
+        data: {
+          ...(name && { name: name }),
+          ...(status && { status: status }),
+          ...(category && { category: category }),
+          ...(start_date && { start_date: new Date(start_date) }),
+          ...(end_date && { end_date: new Date(end_date) }),
+        },
+      });
+
+      return this.toCamelCase(updatedCampaign);
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new AppError(
+          'campaign-repository.update',
+          409,
+          `${error.meta.target[0]} already in use`,
+        );
+      }
+
+      throw new AppError(
+        'campaign-repository.update',
+        500,
+        'could not update campaign',
       );
     }
   }
