@@ -2,12 +2,13 @@ import { Injectable, Inject } from '@nestjs/common';
 import { CampaignRepository } from '../repository/campaign.repository';
 import { ICampaignRepository } from '../interfaces/repository.interface';
 import { AppError } from '../../../common/errors/Error';
+import { ICampaign } from '../interfaces/campaign.interface';
 
 @Injectable()
 export class DeleteCampaignService {
   constructor(
     @Inject(CampaignRepository)
-    private readonly campaignRepository: ICampaignRepository<any>,
+    private readonly campaignRepository: ICampaignRepository<ICampaign>,
   ) {}
 
   async execute(campaignId: string): Promise<void> {
