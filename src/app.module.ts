@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CampaignModule } from './modules/campaign/campaign.module';
 import * as Joi from 'joi';
-import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -16,7 +15,6 @@ import { ScheduleModule } from '@nestjs/schedule';
         POSTGRES_PASSWORD: Joi.string().required(),
       }),
     }),
-    ScheduleModule.forRoot(),
     CampaignModule,
   ],
   controllers: [],
