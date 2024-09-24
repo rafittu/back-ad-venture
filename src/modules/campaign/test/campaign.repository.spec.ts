@@ -133,7 +133,22 @@ describe('CampaignRepository', () => {
       expect(result).toEqual(iCampaingMock);
     });
 
-    it('should throw an error if prisma update fails', async () => {
+    it('should throw conflict error', async () => {
+      jest.spyOn(prismaService.campaign, 'update').mockRejectedValueOnce({
+        code: 'P2002',
+        meta: { target: ['name'] },
+      });
+
+      try {
+        await campaignRepository.update(iCampaingMock.id, iUpdateCampaignMock);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(409);
+        expect(error.message).toBe('name already in use');
+      }
+    });
+
+    it('should throw a generic error if prisma update fails', async () => {
       jest
         .spyOn(prismaService.campaign, 'update')
         .mockRejectedValueOnce(new Error());

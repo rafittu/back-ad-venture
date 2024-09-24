@@ -548,6 +548,29 @@
                             }
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                "$ref": "#/components/schemas/Error"
+                                },
+                                "examples": {
+                                    "example1": {
+                                        "summary": "'field' already in use",
+                                        "value": {
+                                            "error": {
+                                                "message": "'name' already in use",
+                                                "code": "campaign-repository.update",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal server error",
                         "content": {
