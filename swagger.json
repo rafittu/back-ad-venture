@@ -396,6 +396,183 @@
                     }
                 }
             }
+        },
+        "/campaign/update/{id}": {
+            "patch": {
+                "summary": "Update a campaign",
+                "description": "Update campaign details by ID",
+                "tags": ["Campaign"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                        "type": "string"
+                        },
+                        "description": "Campaign ID"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCampaignDto"
+                            },
+                            "examples": {
+                                "example1": {
+                                    "summary": "updating status",
+                                    "value": {
+                                        "status": "PAUSED"
+                                    }
+                                },
+                                "example2": {
+                                    "summary": "updating name and endDate",
+                                    "value": {
+                                        "name": "VALE30",
+                                        "endDate":"2024-10-10T23:59:00Z"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated campaign details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CampaignInterface"
+                                },
+                                "example": {
+                                "id": "fca1c783-96d1-49f9-b8cb-89a7dd8af76a",
+                                "name": "VALE30",
+                                "category": "PROMOTION",
+                                "status": "PAUSED",
+                                "startDate": "2024-10-01T08:00:00Z",
+                                "endDate": "2024-10-10T23:59:00Z",
+                                "createdAt": "2024-10-01T08:00:00.743Z",
+                                "updatedAt": "2024-10-05T08:00:00.743Z"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "examples": {
+                                    "example1": {
+                                        "summary": "invalid campaign status",
+                                        "value": {
+                                            "error": {
+                                                "message": "Campaign 'status' must be one of: ACTIVE, PAUSED, EXPIRED",
+                                                "code": "bad.request",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example2": {
+                                        "summary": "invalid campaign category",
+                                        "value": {
+                                            "error": {
+                                                "message": "Campaign category must be one of the predefined values",
+                                                "code": "bad.request",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example3": {
+                                        "summary": "invalid campaign startDate",
+                                        "value": {
+                                            "error": {
+                                                "message": "Campaign 'startDate' must be at present or future in ISO 8601 format.",
+                                                "code": "bad.request",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example4": {
+                                        "summary": "invalid campaign endDate",
+                                        "value": {
+                                            "error": {
+                                                "message": "Campaign 'endDate' must be at future in ISO 8601 format.",
+                                                "code": "bad.request",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example5": {
+                                        "summary": "invalid startDate or endDate campaign",
+                                        "value": {
+                                            "error": {
+                                                "message": "startDate must be before endDate",
+                                                "code": "campaign-service.update",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example6": {
+                                        "summary": "cannot update expired campaign to active",
+                                        "value": {
+                                            "error": {
+                                                "message": "Cannot update campaign to ACTIVE because it has already expired.",
+                                                "code": "campaign-service.update",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    },
+                                    "example7": {
+                                        "summary": "campaign not found",
+                                        "value": {
+                                            "error": {
+                                                "message": "Campaign not found",
+                                                "code": "campaign-service.update",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                "$ref": "#/components/schemas/Error"
+                                },
+                                "examples": {
+                                    "example1": {
+                                        "summary": "service unknown error",
+                                        "value": {
+                                            "error": {
+                                                "message": "could not update campaign",
+                                                "code": "campaign-repository.update",
+                                                "status": true
+                                            },
+                                            "data": {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
 
@@ -485,6 +662,24 @@
                 "items": {
                     "$ref": "#/components/schemas/CampaignInterface"
                 }
+            },
+            "UpdateCampaignDto": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/CreateCampaign"},
+                    {
+                        "properties": {
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "ACTIVE",
+                                    "PAUSED",
+                                    "EXPIRED"
+                                ],
+                                "description": "Campaign status"
+                            }
+                        }
+                    }
+                ]
             },
 
             "Error": {
