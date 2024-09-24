@@ -115,6 +115,14 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
 
       return this.toCamelCase(updatedCampaign);
     } catch (error) {
+      if (error.code === 'P2002') {
+        throw new AppError(
+          'campaign-repository.update',
+          409,
+          `${error.meta.target[0]} already in use`,
+        );
+      }
+
       throw new AppError(
         'campaign-repository.update',
         500,
