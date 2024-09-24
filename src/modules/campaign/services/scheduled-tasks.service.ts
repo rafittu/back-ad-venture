@@ -20,4 +20,12 @@ export class ScheduledTaskService {
 
     this.jobs.set(campaignId, job);
   }
+
+  async cancelScheduledTask(campaignId: string) {
+    const job = this.jobs.get(campaignId);
+    if (job) {
+      job.cancel();
+      this.jobs.delete(campaignId);
+    }
+  }
 }
