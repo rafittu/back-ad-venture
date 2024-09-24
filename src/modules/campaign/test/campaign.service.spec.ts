@@ -202,5 +202,17 @@ describe('CampaignServices', () => {
 
       expect(result).toEqual(iCampaingMock);
     });
+
+    it('should throw an error if campaign is not found', async () => {
+      jest.spyOn(campaignRepository, 'findOne').mockResolvedValueOnce(null);
+
+      try {
+        await updateCampaign.execute(iCampaingMock.id, updateCampaignDtoMock);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(404);
+        expect(error.message).toBe('Campaign not found');
+      }
+    });
   });
 });
