@@ -2,9 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CampaignModule } from './modules/campaign/campaign.module';
 import * as Joi from 'joi';
-import { Cron, ScheduleModule } from '@nestjs/schedule';
-import { ICampaignRepository } from './modules/campaign/interfaces/repository.interface';
-import { ICampaign } from './modules/campaign/interfaces/campaign.interface';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -24,13 +22,4 @@ import { ICampaign } from './modules/campaign/interfaces/campaign.interface';
   controllers: [],
   providers: [],
 })
-export class AppModule {
-  constructor(
-    private readonly campaignRepository: ICampaignRepository<ICampaign>,
-  ) {}
-
-  @Cron('0 * * * *')
-  async handleCron() {
-    await this.campaignRepository.checkCampaignStatus();
-  }
-}
+export class AppModule {}
