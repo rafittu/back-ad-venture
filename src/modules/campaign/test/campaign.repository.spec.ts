@@ -221,4 +221,42 @@ describe('CampaignRepository', () => {
       }
     });
   });
+
+  describe('find active campaigns with endDate after Y time', () => {
+    it('should return a list of active campaigns with endDate after the provided date', async () => {
+      const date = new Date();
+
+      const result =
+        await campaignRepository.findActiveCampaignsWithEndDateAfter(date);
+
+      expect(prismaService.campaign.findMany).toHaveBeenCalledWith({
+        where: {
+          end_date: {
+            gt: date,
+          },
+          status: {
+            not: 'EXPIRED',
+          },
+        },
+      });
+      expect(result).toEqual([iCampaingMock]);
+    });
+
+    it('should throw an AppError if findActiveCampaignsWithEndDateAfter fails', async () => {
+      const date = new Date();
+      jest
+        .spyOn(prismaService.campaign, 'findMany')
+        .mockRejectedValueOnce(new Error('Prisma error'));
+
+      try {
+        await campaignRepository.findActiveCampaignsWithEndDateAfter(date);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe(
+          'Error fetching active campaigns with end date after the given date',
+        );
+      }
+    });
+  });
 });
