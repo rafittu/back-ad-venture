@@ -8,6 +8,7 @@ import {
   IUpdateCampaign,
 } from '../interfaces/campaign.interface';
 import { AppError } from '../../../common/errors/Error';
+import { CampaignStatus } from '@prisma/client';
 
 @Injectable()
 export class CampaignRepository implements ICampaignRepository<ICampaign> {
@@ -139,6 +140,26 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
         'campaign-repository.delete',
         500,
         'could not delete campaign',
+      );
+    }
+  }
+
+  async checkCampaignStatus(): Promise<void> {
+    const now = new Date();
+
+    try {
+      await this.prisma.campaign.updateMany({
+        where: {
+          end_date: { lt: now },
+          status: { not: CampaignStatus.EXPIRED },
+        },
+        data: { status: CampaignStatus.EXPIRED },
+      });
+    } catch (error) {
+      throw new AppError(
+        'campaign-repository.checkCampaignStatus',
+        500,
+        'could not check campaigns status',
       );
     }
   }

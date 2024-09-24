@@ -10,4 +10,5 @@ export interface ICampaignRepository<ICampaign> {
   findByFilters(filters: CampaignFilters): Promise<ICampaign[]>;
   update(id: string, data: IUpdateCampaign): Promise<ICampaign>;
   delete(campaignId: string): Promise<void>;
+  checkCampaignStatus(): Promise<void>;
 }
