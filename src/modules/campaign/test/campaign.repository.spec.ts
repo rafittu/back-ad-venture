@@ -9,6 +9,7 @@ import {
   iUpdateCampaignMock,
 } from './mocks/campaign.mock';
 import { AppError } from '../../../common/errors/Error';
+import { CampaignStatus } from '@prisma/client';
 
 describe('CampaignRepository', () => {
   let campaignRepository: CampaignRepository;
@@ -29,6 +30,7 @@ describe('CampaignRepository', () => {
               findMany: jest.fn().mockResolvedValue([campaignMock]),
               update: jest.fn().mockResolvedValue(campaignMock),
               delete: jest.fn().mockResolvedValue(null),
+              updateMany: jest.fn().mockResolvedValue({ count: 10 }),
             },
           },
         },
@@ -186,6 +188,36 @@ describe('CampaignRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('could not delete campaign');
+      }
+    });
+  });
+
+  describe('check campaign status', () => {
+    it('should update campaigns status to EXPIRED successfully', async () => {
+      const now = new Date();
+
+      await campaignRepository.checkCampaignStatus();
+
+      expect(prismaService.campaign.updateMany).toHaveBeenCalledWith({
+        where: {
+          end_date: { lt: now },
+          status: { not: CampaignStatus.EXPIRED },
+        },
+        data: { status: CampaignStatus.EXPIRED },
+      });
+    });
+
+    it('should throw an AppError if updateMany fails', async () => {
+      jest
+        .spyOn(prismaService.campaign, 'updateMany')
+        .mockRejectedValueOnce(new Error('Prisma error'));
+
+      try {
+        await campaignRepository.checkCampaignStatus();
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('could not check campaigns status');
       }
     });
   });
