@@ -11,4 +11,5 @@ export interface ICampaignRepository<ICampaign> {
   update(id: string, data: IUpdateCampaign): Promise<ICampaign>;
   delete(campaignId: string): Promise<void>;
   checkCampaignStatusById(campaignId: string): Promise<void>;
+  findActiveCampaignsWithEndDateAfter(date: Date): Promise<ICampaign[]>;
 }

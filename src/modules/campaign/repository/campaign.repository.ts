@@ -164,4 +164,27 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
       );
     }
   }
+
+  async findActiveCampaignsWithEndDateAfter(date: Date): Promise<ICampaign[]> {
+    try {
+      const campaigns = await this.prisma.campaign.findMany({
+        where: {
+          end_date: {
+            gt: date,
+          },
+          status: {
+            not: 'EXPIRED',
+          },
+        },
+      });
+
+      return this.toCamelCaseArray(campaigns);
+    } catch (error) {
+      throw new AppError(
+        'campaign-repository.findActiveCampaignsWithEndDateAfter',
+        500,
+        'Error fetching active campaigns with end date after the given date',
+      );
+    }
+  }
 }

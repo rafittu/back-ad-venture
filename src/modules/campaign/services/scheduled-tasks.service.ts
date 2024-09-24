@@ -33,4 +33,15 @@ export class ScheduledTaskService {
     this.cancelScheduledTask(campaignId);
     this.scheduleCampaignEnd(campaignId, newEndDate);
   }
+
+  async checkCampaignStatus() {
+    const now = new Date();
+
+    const activeCampaigns =
+      await this.campaignRepository.findActiveCampaignsWithEndDateAfter(now);
+
+    activeCampaigns.forEach((campaign) => {
+      this.scheduleCampaignEnd(campaign.id, campaign.endDate);
+    });
+  }
 }
