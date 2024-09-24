@@ -336,5 +336,16 @@ describe('CampaignServices', () => {
       );
       expect(scheduledTasks['jobs'].get(iCampaingMock.id)).toEqual(mockJob);
     });
+
+    it('should cancel a scheduled task', async () => {
+      const mockJob = { cancel: jest.fn() };
+
+      scheduledTasks['jobs'].set(iCampaingMock.id, mockJob);
+
+      await scheduledTasks.cancelScheduledTask(iCampaingMock.id);
+
+      expect(mockJob.cancel).toHaveBeenCalled();
+      expect(scheduledTasks['jobs'].has(iCampaingMock.id)).toBeFalsy();
+    });
   });
 });
