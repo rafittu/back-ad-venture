@@ -5,12 +5,14 @@ import { ICampaignRepository } from '../interfaces/repository.interface';
 import { CampaignCategory, CampaignStatus } from '@prisma/client';
 import { CreateCampaignDto } from '../dto/create-campaign.dto';
 import { ICampaign } from '../interfaces/campaign.interface';
+import { ScheduledTaskService } from './scheduled-tasks.service';
 
 @Injectable()
 export class CreateCampaignService {
   constructor(
     @Inject(CampaignRepository)
     private readonly campaignRepository: ICampaignRepository<ICampaign>,
+    private readonly scheduledTaskService: ScheduledTaskService,
   ) {}
 
   async execute(data: CreateCampaignDto): Promise<ICampaign> {
@@ -32,6 +34,11 @@ export class CreateCampaignService {
         start_date: startDate,
         end_date: endDate,
       });
+
+      this.scheduledTaskService.scheduleCampaignEnd(
+        campaign.id,
+        campaign.endDate,
+      );
 
       return campaign;
     } catch (error) {
