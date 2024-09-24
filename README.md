@@ -1,73 +1,105 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# ♨️ Back-end da aplicação AdVenture
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+###
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+<br>
 
-## Description
+O projeto AdVenture consiste em uma API desenvolvida para simplificar a gestão de campanhas com recursos que permitem criar, visualizar, atualizar e deletar campanhas.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+<br>
 
-## Installation
+## Tecnologias
+
+Este projeto utiliza as seguintes tecnologias:
+
+- **Node.js** com framework **NestJS** e **TypeScript**;
+- **Prisma ORM** para comunicação e manipulação do banco de dados **PostgreSQL**;
+- **Helmet** para configuração segura dos cabeçalhos HTTP;
+- **Docker** como uma ferramenta de containerização;
+- **Jest** para execução e automação dos testes unitários;
+- **Swagger** para documentação da API;
+
+<br>
+
+## Funcionalidades
+### Gerenciamento de Campanhas:
+- Cadastro, listagem, visualização, edição e exclusão de campanhas.
+- Atualização automatica de status com `node-scheduler`.
+- Filtros avançados para busca de campanhas por nome, categoria, status, data inicial, data termino.
+
+<br>
+
+### 🚧 Futuras implementações:
+- Ampliação de endpoints para painel administrativo;
+    - criação de usuários;
+    - login e autenticação;
+    - rotas privadas;
+
+ - Integração microserviço:
+    - campanha válida até a data termino ou limite de usos;
+
+<br>
+
+## Configuração do Projeto
+
+### Requisitos para rodar a aplicação
+
+- NodeJs (versão 18.x ou superior);
+- Docker e Docker Compose;
+
+### Instalação
+
+1. Clonando o repositório:
 
 ```bash
-$ npm install
+$ git clone git@github.com:rafittu/back-ad-venture.git
+$ cd back-ad-venture
 ```
 
-## Running the app
+2. Crie um arquivo `.env` na raiz do projeto e preencha as informações de acordo com o arquivo `.env.example` disponível.
+
+3. Inicie o ambiente de desenvolvimento:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+$ docker-compose up --build
 ```
 
-## Test
+<br>
+
+## Testes
+
+<br>
+
+A API possui uma cobertura de testes unitários abrangente, com 100% de cobertura em cada parte essencial do código, garantindo a qualidade e o correto funcionamento do sistema.
+
+Para executar os testes unitários, utilize o seguinte comando:
 
 ```bash
-# unit tests
 $ npm run test
+```
 
-# e2e tests
-$ npm run test:e2e
+Você também pode gerar um relatório de cobertura dos testes para verificar quais partes do código foram testadas. Para gerar esse relatório, utilize o seguinte comando:
 
-# test coverage
+```bash
 $ npm run test:cov
 ```
 
-## Support
+<br>
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Documentação
 
-## Stay in touch
+<br>
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+A documentação completa da API está disponível através do Swagger. Para acessá-la, siga as etapas abaixo:
 
-## License
+- Certifique-se de ter a API em execução localmente ou em um ambiente acessível;
+- Abra um navegador da web e acesse a seguinte URL: `http://localhost:3000/v1/api-doc` (substitua `3000` pelo número da porta inserida no arquivo `.env`);
+- A documentação interativa da API será exibida no Swagger UI, onde você poderá explorar todos os endpoints, seus parâmetros e exemplos de solicitação/resposta.
 
-Nest is [MIT licensed](LICENSE).
+<br>
+
+##
+
+<p align="right">
+  <a href="https://www.linkedin.com/in/rafittu/">Rafael Ribeiro 🚀</a>
+</p>
