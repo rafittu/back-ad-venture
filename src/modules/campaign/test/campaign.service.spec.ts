@@ -1,15 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateCampaignService } from '../services/create-campaign.service';
 import { CampaignRepository } from '../repository/campaign.repository';
-import { createCampaignDtoMock, iCampaingMock } from './mocks/campaign.mock';
+import {
+  createCampaignDtoMock,
+  iCampaingMock,
+  updateCampaignDtoMock,
+} from './mocks/campaign.mock';
 import { AppError } from '../../../common/errors/Error';
 import { FindOneCampaignService } from '../services/find-one-campaign.service';
 import { FindCampaignsByFilterService } from '../services/find-campaigns-by-filter.service';
+import { UpdateCampaignService } from '../services/update-campaign.service';
 
 describe('CampaignServices', () => {
   let createCampaign: CreateCampaignService;
   let findOneCampaign: FindOneCampaignService;
   let findCampaignsByFilter: FindCampaignsByFilterService;
+  let updateCampaign: UpdateCampaignService;
 
   let campaignRepository: CampaignRepository;
 
@@ -21,12 +27,14 @@ describe('CampaignServices', () => {
         CreateCampaignService,
         FindOneCampaignService,
         FindCampaignsByFilterService,
+        UpdateCampaignService,
         {
           provide: CampaignRepository,
           useValue: {
             create: jest.fn().mockResolvedValue(iCampaingMock),
             findOne: jest.fn().mockResolvedValue(iCampaingMock),
             findByFilters: jest.fn().mockResolvedValue([iCampaingMock]),
+            update: jest.fn().mockResolvedValue(iCampaingMock),
           },
         },
       ],
@@ -39,6 +47,7 @@ describe('CampaignServices', () => {
     findCampaignsByFilter = module.get<FindCampaignsByFilterService>(
       FindCampaignsByFilterService,
     );
+    updateCampaign = module.get<UpdateCampaignService>(UpdateCampaignService);
 
     campaignRepository = module.get<CampaignRepository>(CampaignRepository);
   });
@@ -47,6 +56,7 @@ describe('CampaignServices', () => {
     expect(createCampaign).toBeDefined();
     expect(findOneCampaign).toBeDefined();
     expect(findCampaignsByFilter).toBeDefined();
+    expect(updateCampaign).toBeDefined();
   });
 
   describe('create campaign', () => {
@@ -180,6 +190,17 @@ describe('CampaignServices', () => {
           `Invalid category value 'invalid-category'.`,
         );
       }
+    });
+  });
+
+  describe('update campaign', () => {
+    it('should update a campaign successfully', async () => {
+      const result = await updateCampaign.execute(
+        iCampaingMock.id,
+        updateCampaignDtoMock,
+      );
+
+      expect(result).toEqual(iCampaingMock);
     });
   });
 });
