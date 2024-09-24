@@ -10,6 +10,7 @@ import { AppError } from '../../../common/errors/Error';
 import { FindOneCampaignService } from '../services/find-one-campaign.service';
 import { FindCampaignsByFilterService } from '../services/find-campaigns-by-filter.service';
 import { UpdateCampaignService } from '../services/update-campaign.service';
+import { CampaignStatus } from '@prisma/client';
 
 describe('CampaignServices', () => {
   let createCampaign: CreateCampaignService;
@@ -228,6 +229,26 @@ describe('CampaignServices', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(400);
         expect(error.message).toBe('startDate must be before endDate');
+      }
+    });
+
+    it('should throw an error if trying to activate an expired campaign', async () => {
+      jest.spyOn(campaignRepository, 'findOne').mockResolvedValueOnce({
+        ...iCampaingMock,
+        endDate: new Date(Date.now() - 100000),
+      });
+
+      try {
+        await updateCampaign.execute(iCampaingMock.id, {
+          ...updateCampaignDtoMock,
+          status: CampaignStatus.ACTIVE,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'Cannot update campaign to ACTIVE because it has already expired.',
+        );
       }
     });
   });
