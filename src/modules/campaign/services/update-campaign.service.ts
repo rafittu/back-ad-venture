@@ -5,12 +5,14 @@ import { UpdateCampaignDto } from '../dto/update-campaign.dto';
 import { ICampaign } from '../interfaces/campaign.interface';
 import { AppError } from '../../../common/errors/Error';
 import { CampaignCategory, CampaignStatus } from '@prisma/client';
+import { ScheduledTaskService } from './scheduled-tasks.service';
 
 @Injectable()
 export class UpdateCampaignService {
   constructor(
     @Inject(CampaignRepository)
     private readonly campaignRepository: ICampaignRepository<ICampaign>,
+    private readonly scheduledTaskService: ScheduledTaskService,
   ) {}
 
   private validateCampaignDates(startDate?: Date, endDate?: Date): void {
@@ -51,12 +53,21 @@ export class UpdateCampaignService {
 
     this.validateCampaignDates(startDate, endDate);
 
-    return await this.campaignRepository.update(campaignId, {
+    const updatedCampaign = await this.campaignRepository.update(campaignId, {
       name,
       category: updateData.category as CampaignCategory,
       status: updateData.status as CampaignStatus,
       start_date: startDate,
       end_date: endDate,
     });
+
+    if (endDate) {
+      this.scheduledTaskService.rescheduleCampaignEnd(
+        updatedCampaign.id,
+        endDate,
+      );
+    }
+
+    return updatedCampaign;
   }
 }

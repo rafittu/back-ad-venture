@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { CampaignController } from './campaign.controller';
 import { CampaignRepository } from './repository/campaign.repository';
 import { CreateCampaignService } from './services/create-campaign.service';
@@ -22,4 +22,10 @@ import { ScheduledTaskService } from './services/scheduled-tasks.service';
     ScheduledTaskService,
   ],
 })
-export class CampaignModule {}
+export class CampaignModule implements OnApplicationBootstrap {
+  constructor(private readonly scheduledTaskService: ScheduledTaskService) {}
+
+  onApplicationBootstrap() {
+    this.scheduledTaskService.checkCampaignStatus();
+  }
+}

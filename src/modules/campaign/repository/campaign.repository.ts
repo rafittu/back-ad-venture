@@ -144,12 +144,13 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
     }
   }
 
-  async checkCampaignStatus(): Promise<void> {
+  async checkCampaignStatusById(campaignId: string): Promise<void> {
     const now = new Date();
 
     try {
-      await this.prisma.campaign.updateMany({
+      await this.prisma.campaign.update({
         where: {
+          id: campaignId,
           end_date: { lt: now },
           status: { not: CampaignStatus.EXPIRED },
         },
@@ -159,7 +160,30 @@ export class CampaignRepository implements ICampaignRepository<ICampaign> {
       throw new AppError(
         'campaign-repository.checkCampaignStatus',
         500,
-        'could not check campaigns status',
+        'could not check campaign status by id',
+      );
+    }
+  }
+
+  async findActiveCampaignsWithEndDateAfter(date: Date): Promise<ICampaign[]> {
+    try {
+      const campaigns = await this.prisma.campaign.findMany({
+        where: {
+          end_date: {
+            gt: date,
+          },
+          status: {
+            not: 'EXPIRED',
+          },
+        },
+      });
+
+      return this.toCamelCaseArray(campaigns);
+    } catch (error) {
+      throw new AppError(
+        'campaign-repository.findActiveCampaignsWithEndDateAfter',
+        500,
+        'Error fetching active campaigns with end date after the given date',
       );
     }
   }
