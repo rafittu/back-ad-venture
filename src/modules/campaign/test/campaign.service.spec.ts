@@ -214,5 +214,21 @@ describe('CampaignServices', () => {
         expect(error.message).toBe('Campaign not found');
       }
     });
+
+    it('should throw an error if endDate is before startDate', async () => {
+      const invalidDto = {
+        ...updateCampaignDtoMock,
+        startDate: new Date(Date.now() + 10000),
+        endDate: new Date(Date.now()),
+      };
+
+      try {
+        await updateCampaign.execute(iCampaingMock.id, invalidDto);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('startDate must be before endDate');
+      }
+    });
   });
 });
