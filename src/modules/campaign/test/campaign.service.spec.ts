@@ -347,5 +347,44 @@ describe('CampaignServices', () => {
       expect(mockJob.cancel).toHaveBeenCalled();
       expect(scheduledTasks['jobs'].has(iCampaingMock.id)).toBeFalsy();
     });
+
+    it('should call checkCampaignStatusById when jobs executes', async () => {
+      let scheduledCallback;
+
+      (schedule.scheduleJob as jest.Mock).mockImplementationOnce(
+        (date, callback) => {
+          scheduledCallback = callback;
+          return { cancel: jest.fn() };
+        },
+      );
+
+      await scheduledTasks.scheduleCampaignEnd(
+        iCampaingMock.id,
+        iCampaingMock.endDate,
+      );
+
+      expect(schedule.scheduleJob).toHaveBeenCalledWith(
+        iCampaingMock.endDate,
+        expect.any(Function),
+      );
+
+      await scheduledCallback();
+
+      expect(campaignRepository.checkCampaignStatusById).toHaveBeenCalledWith(
+        iCampaingMock.id,
+      );
+    });
+
+    it('should check campaigns status on application bootstrap', async () => {
+      campaignRepository.findActiveCampaignsWithEndDateAfter = jest
+        .fn()
+        .mockResolvedValue([iCampaingMock]);
+
+      await scheduledTasks.checkCampaignStatus();
+
+      expect(
+        campaignRepository.findActiveCampaignsWithEndDateAfter,
+      ).toHaveBeenCalled();
+    });
   });
 });
