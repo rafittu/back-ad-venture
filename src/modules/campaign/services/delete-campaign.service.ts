@@ -13,9 +13,7 @@ export class DeleteCampaignService {
   async execute(campaignId: string): Promise<void> {
     const existingCampaign = await this.campaignRepository.findOne(campaignId);
 
-    console.log(existingCampaign);
-
-    if (!existingCampaign || {}) {
+    if (!existingCampaign || !Object.keys(existingCampaign).length) {
       throw new AppError('campaign-service.delete', 404, 'Campaign not found');
     }
 
