@@ -13,6 +13,9 @@ import { UpdateCampaignService } from '../services/update-campaign.service';
 import { CampaignStatus } from '@prisma/client';
 import { DeleteCampaignService } from '../services/delete-campaign.service';
 import { ScheduledTaskService } from '../services/scheduled-tasks.service';
+import * as schedule from 'node-schedule';
+
+jest.mock('node-schedule');
 
 describe('CampaignServices', () => {
   let createCampaign: CreateCampaignService;
@@ -43,7 +46,10 @@ describe('CampaignServices', () => {
             findByFilters: jest.fn().mockResolvedValue([iCampaingMock]),
             update: jest.fn().mockResolvedValue(iCampaingMock),
             delete: jest.fn().mockResolvedValue(null),
-            checkCampaignStatus: jest.fn(),
+            checkCampaignStatusById: jest.fn(),
+            findActiveCampaignsWithEndDateAfter: jest
+              .fn()
+              .mockResolvedValue([iCampaingMock]),
           },
         },
       ],
@@ -61,6 +67,10 @@ describe('CampaignServices', () => {
     scheduledTasks = module.get<ScheduledTaskService>(ScheduledTaskService);
 
     campaignRepository = module.get<CampaignRepository>(CampaignRepository);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -291,10 +301,21 @@ describe('CampaignServices', () => {
   });
 
   describe('scheduled tasks', () => {
-    it('should call checkCampaignStatus on campaignRepository', async () => {
-      await scheduledTasks.checkCampaignStatus();
+    it('should schedule a campaign end task', async () => {
+      const mockJob = { cancel: jest.fn() };
 
-      expect(campaignRepository.checkCampaignStatus).toHaveBeenCalled();
+      (schedule.scheduleJob as jest.Mock).mockReturnValue(mockJob);
+
+      await scheduledTasks.scheduleCampaignEnd(
+        iCampaingMock.id,
+        iCampaingMock.endDate,
+      );
+
+      expect(schedule.scheduleJob).toHaveBeenCalledWith(
+        iCampaingMock.endDate,
+        expect.any(Function),
+      );
+      expect(scheduledTasks['jobs'].get(iCampaingMock.id)).toEqual(mockJob);
     });
   });
 });
